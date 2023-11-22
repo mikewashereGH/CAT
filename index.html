@@ -98,29 +98,48 @@
         });
 
         var startTime;
-        var timerElement = document.getElementById('timer');
+        var elapsedTimeElement = document.getElementById('elapsedTime');
+
+        var startDateTime = new Date("November 21, 2023 21:25:00");
+        var startTimestamp = startDateTime.getTime();
+        var counterRef = database.ref('counter');
+        var startTimeRef = database.ref('startTime');
+
+        counterBtn.addEventListener('click', function () {
+            counterRef.transaction(function (currentValue) {
+                return (currentValue || 0) + 1;
+            });
+        });
+
+        counterRef.on('value', function (snapshot) {
+            counterBtn.textContent = 'This button was clicked ' + snapshot.val() + ' times.';
+        });
+
+        startTimer();
 
         function startTimer() {
-            startTime = Date.now();
-            updateTimer();
-            setInterval(updateTimer, 1000);
+            startTimeRef.set(startTimestamp); // Save the start time to the database
+
+            startTimeRef.on('value', function (snapshot) {
+                startTime = snapshot.val();
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            });
         }
 
         function updateTimer() {
             var currentTime = Date.now();
             var elapsedTime = currentTime - startTime;
 
-            var seconds = Math.floor(elapsedTime / 1000) % 60;
-            var minutes = Math.floor(elapsedTime / 60000) % 60;
-            var hours = Math.floor(elapsedTime / 3600000) % 24;
-            var formattedTime = hours.toString().padStart(2, '0') + ':' +
-                minutes.toString().padStart(2, '0') + ':' +
-                seconds.toString().padStart(2, '0');
+            var days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+            var minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+            var seconds = Math.floor((elapsedTime / 1000) % 60);
 
-            timerElement.textContent = formattedTime;
+            var formattedTime = days + 'D ' + hours + 'H ' + minutes + 'M ' + seconds + 'S';
+
+            elapsedTimeElement.textContent = formattedTime;
         }
-
-        startTimer();
     </script>
 </body>
 
