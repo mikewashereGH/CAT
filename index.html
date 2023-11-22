@@ -2,26 +2,54 @@
 <html>
 
 <head>
-    <title>CAT - Click Application Test</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f9f9f9;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Click Counter</h1>
-        <p>This button was clicked <span id="count">0</span> times.</p>
-        <button id="clickButton">Click Here</button>
-        <h2>Leaderboard</h2>
-        <ol id="leaderboardList"></ol>
-        <p id="loggedInUser"></p>
-        <button id="loginButton">Log In</button>
-        <button id="logoutButton">Log Out</button>
-    </div>
+    <button id="counterBtn">Click Me</button>
 
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
-    <script src="app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDHqagLKHyTdC03oULCREbkxA1twi7AFWs",
+            authDomain: "clicker-72afe.firebaseapp.com",
+            projectId: "clicker-72afe",
+            storageBucket: "clicker-72afe.appspot.com",
+            databaseURL: "https://clicker-72afe-default-rtdb.firebaseio.com/",
+            messagingSenderId: "691683048296",
+            appId: "1:691683048296:web:6388ae6642e0b10fdef4dd"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        var database = firebase.database();
+        var counterBtn = document.getElementById('counterBtn');
+        var counterRef = database.ref('counter');
+
+        counterBtn.addEventListener('click', function () {
+            counterRef.transaction(function (currentValue) {
+                return (currentValue || 0) + 1;
+            });
+        });
+
+        counterRef.on('value', function (snapshot) {
+            counterBtn.textContent = 'This button was clicked ' + snapshot.val() + ' times.';
+        });
+    </script>
 </body>
 
 </html>
