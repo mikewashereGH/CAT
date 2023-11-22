@@ -112,7 +112,7 @@
         });
 
         counterRef.on('value', function (snapshot) {
-            counterBtn.textContent = 'This button was clicked ' + snapshot.val() + ' times.';
+            counterBtn.textContent = snapshot.val() + ' Clicks';
         });
 
         startTimer();
