@@ -106,16 +106,6 @@
         var counterRef = database.ref('counter');
         var startTimeRef = database.ref('startTime');
 
-        counterBtn.addEventListener('click', function () {
-            counterRef.transaction(function (currentValue) {
-                return (currentValue || 0) + 1;
-            });
-        });
-
-        counterRef.on('value', function (snapshot) {
-            counterBtn.textContent = snapshot.val() + ' Clicks';
-        });
-
         startTimer();
 
         function startTimer() {
